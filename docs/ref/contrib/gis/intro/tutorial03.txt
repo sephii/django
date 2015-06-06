@@ -1,0 +1,68 @@
+==============================================================
+Working with GeoDjango, part 3: representing geographical data
+==============================================================
+
+Raw geographical data is rarely useful. You will probably want to output it in
+a way that users can actually read it, that is in the form of a map.
+
+In this example we will be using the `Leaflet <http://leafletjs.com/>`_
+JavaScript library since it's very easy to use and it's actively maintained.
+
+Start by including the Leaflet library in your template:
+
+.. snippet::
+    :filename: tracking/templates/index.html
+
+    <html>
+      <head>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+        <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+      </head>
+    </html>
+
+Then let's build a view that will return the position of all animals as well as
+the coordinates of all the reserves. The
+:class:`~django.contrib.gis.geos.Point` class provides a `json` method that
+allows you to directly output the coordinates in a JSON.
+
+.. snippet::
+    :filename: tracking/views.py
+
+    def index(request):
+        return render(request, {
+            'animals_positions': [a.position.json for a in Animal.objects.all()],
+            'reserves_boundaries': [r.boundaries.json for r in Reserve.objects.all()],
+        })
+
+For the data to be displayed on the map, we need to pass it to JavaScript. For
+that, we'll put it in the template:
+
+.. snippet::
+    :filename: tracking/templates/index.html
+
+    <html>
+      ...
+      <body>
+        <script>
+          var animals = [{{ animals_positions|join:"," }}];
+          var reserves = [{{ reserves_boundaries|join:"," }}];
+        </script>
+      </body>
+    </html>
+
+And now we can display the data on the map:
+
+.. snippet::
+    :filename: tracking/templates/index.html
+
+    ...
+    <body>
+      ...
+      <script>
+
+      </script>
+    </body>
+
+TODO:
+
+- REST

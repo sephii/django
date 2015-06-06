@@ -5,29 +5,61 @@ GeoDjango
 .. module:: django.contrib.gis
     :synopsis: Geographic Information System (GIS) extensions for Django
 
-GeoDjango intends to be a world-class geographic Web framework. Its goal is to
-make it as easy as possible to build GIS Web applications and harness the power
-of spatially enabled data.
+GeoDjango is an included contrib module for Django that turns it into a
+world-class geographic Web framework. GeoDjango strives to make it as simple
+as possible to create geographic Web applications, like location-based services.
+Its features include:
+
+* Django model fields for `OGC`_ geometries
+* Extensions to Django's ORM for querying and manipulating spatial data.
+* Loosely-coupled, high-level Python interfaces for GIS geometry operations and
+  data formats
+* Editing geometry fields from the admin
+
+.. _OGC: http://www.opengeospatial.org/
+
+First steps
+===========
+
+* **From scratch:**
+  :doc:`Installation <install/index>`
+
+* **Tutorial:**
+  :doc:`Part 1: Models and lookups <intro/tutorial01>` |
+  :doc:`Part 2: The admin site <intro/tutorial02>`
+
+Models
+======
+
+* :doc:`db-api`
+* :doc:`geoquerysets`
+
+Forms
+=====
+
+* :doc:`forms-api`
+
+Working with GeoDjango
+======================
+
+* :doc:`admin`
+* :doc:`feeds`
+* :doc:`sitemaps`
+* :doc:`commands`
+* :doc:`testing`
+* :doc:`deployment`
+
+Reference
+=========
 
 .. toctree::
-    :maxdepth: 2
+   :maxdepth: 1
 
-    tutorial
-    install/index
-    model-api
-    db-api
-    forms-api
-    geoquerysets
-    functions
-    measure
-    geos
-    gdal
-    geoip
-    geoip2
-    utils
-    commands
-    admin
-    feeds
-    sitemaps
-    testing
-    deployment
+   model-api
+   functions
+   measure
+   geos
+   gdal
+   geoip
+   geoip2
+   utils

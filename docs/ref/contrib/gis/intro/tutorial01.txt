@@ -1,0 +1,175 @@
+==========================================
+Working with GeoDjango, part 1: the models
+==========================================
+
+In this tutorial we're going to build the foundations of an application that
+tracks animals in natural reserves.
+
+.. note::
+
+    This tutorial assumes familiarity with Django; thus, if you're brand new to
+    Django, please read through the :doc:`regular tutorial </intro/tutorial01>` to
+    familiarize yourself with Django first.
+
+    GeoDjango has additional requirements beyond what Django requires --
+    please consult the :doc:`installation documentation <install/index>`
+    for more details.
+
+Setting up
+==========
+
+Create a new project
+--------------------
+
+Use the standard ``django-admin`` script to create a project called
+``geodjango``:
+
+.. code-block:: console
+
+    $ django-admin startproject geodjango
+
+This will initialize a new project. Now, create a ``tracking`` Django application
+within the ``geodjango`` project:
+
+.. code-block:: console
+
+    $ cd geodjango
+    $ python manage.py startapp tracking
+
+Configure ``settings.py``
+-------------------------
+
+The ``geodjango`` project settings are stored in the ``geodjango/settings.py``
+file. Edit the database connection settings to match your setup::
+
+    DATABASES = {
+        'default': {
+             'ENGINE': 'django.contrib.gis.db.backends.postgis',
+             ...
+         }
+    }
+
+In addition, modify the :setting:`INSTALLED_APPS` setting to include
+:mod:`django.contrib.admin`, :mod:`django.contrib.gis`,
+and ``tracking`` (your newly created application)::
+
+    INSTALLED_APPS = [
+        'tracking',
+        'django.contrib.gis',
+        ...
+    ]
+
+Defining our models
+===================
+
+Edit ``tracking/models.py`` to look like the following::
+
+    from django.contrib.gis.db import models
+
+    class Animal(models.Model):
+        species = models.CharField(max_length=50)
+        name = models.CharField(max_length=50)
+        position = models.PointField()
+
+        def __unicode__(self):
+            return '%s (%s)' % (self.name, self.species)
+
+
+    class Reserve(models.Model):
+        name = models.CharField(max_length=50)
+        boundaries = models.PolygonField()
+
+        def __unicode__(self):
+            return self.name
+
+
+As you can see, all Django models are available through GeoDjango's models. We
+used a new model type, provided by GeoDjango, named ``PointField``.
+
+.. note::
+
+    The default spatial reference system for geometry fields is WGS84 (meaning
+    the `SRID`__ is 4326) -- in other words, the field coordinates are in
+    longitude, latitude pairs in units of degrees.  To use a different
+    coordinate system, set the SRID of the geometry field with the ``srid``
+    argument. Use an integer representing the coordinate system's EPSG code.
+
+    __ http://en.wikipedia.org/wiki/SRID
+
+After defining your model, we need to sync it with the database. First, create
+a database migration:
+
+.. code-block:: console
+
+    $ python manage.py makemigrations
+    Migrations for 'tracking':
+      0001_initial.py:
+        - Create model Animal
+        - Create model Reserve
+
+Next, run :djadmin:`migrate` to create this table in the database:
+
+.. code-block:: console
+
+    $ python manage.py migrate
+    Operations to perform:
+      Apply all migrations: admin, tracking, contenttypes, auth, sessions
+    Running migrations:
+      ...
+      Applying tracking.0001_initial... OK
+
+Playing with the API
+====================
+
+Let's create some objects and see what we can do with them.
+
+.. code-block:: console
+
+    $ python manage.py shell
+
+Let's see how it works::
+
+    >>> from tracking.models import Animal
+    >>> from django.contrib.gis.geos import Point
+    >>> Animal(name='Hobbes', species='tiger', position=Point(0, 0)).save()
+    >>> Animal(name='Marcel', species='elephant', position=Point(10, 10)).save()
+    >>> Animal(name='Bob', species='elephant', position=Point(10, 12)).save()
+
+.. note::
+
+    You might wonder what these coordinates mean. Actually they don't mean
+    anything, they're just examples. You'll rarely have to enter this kind of
+    data manually, usually it will come from a map, an external service, or
+    something similar.
+
+We can easily calculate the distance between Hobbes the tiger and Marcel the
+elephant using the :ref:`_distance-queries` distance method::
+
+    >>> marcel = Animal.objects.get('Marcel')
+    >>> hobbes = Animal.objects.get(name='Hobbes').annotate(
+    ...     distance=Distance('position', marcel.position)
+    ... )
+    >>> hobbes.distance
+    Distance(m=1568522.71629)
+    >>> # Distance objects can easily be converted to various units
+    >>> hobbes.distance.km
+    1568.52271629392
+
+We can get the list of all individuals ordered by their distance from the only
+tiger in the reserve::
+
+    >>> Animal.objects.distance(Animal.objects.get(species='tiger').position).order_by('distance')
+
+We can even search for elephants that are less than 500 km away from the
+tiger::
+
+    >>> from django.contrib.gis.measure import D
+    >>> hobbes = Animal.objects.get(name='Hobbes')
+    >>> Animal.objects.filter(species='elephant', position__distance_lt=(hobbes.position, D(km=500)))
+    [<Animal: Marcel (elephant)>, <Animal: Bob (elephant)>]
+
+At this point we have defined geographic models and we can already add/edit
+data and do distance calculations. Chances are you'll want a better interface
+to enter the data though, and this is where the admin interface comes into
+play. Head over the :doc:`part 2 of this tutorial
+</ref/contrib/gis/intro/tutorial02>` to start working with the admin.

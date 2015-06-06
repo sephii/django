@@ -1,0 +1,9 @@
+TODO django.contrib.gis
+=======================
+
+- Change the name GeoDjango? The current name seems to imply that the project
+  is separated from Django itself. Rename it to something more specific like
+  django.contrib.gis?
+- Get rid of geodjango.org or make something really useful out of it
+- Get rid of "GeoDjango" references in pages titles
+- Document form field classes
