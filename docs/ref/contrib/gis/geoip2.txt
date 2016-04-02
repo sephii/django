@@ -8,7 +8,9 @@ Geolocation with GeoIP2
 .. versionadded:: 1.9
 
 The :class:`GeoIP2` object is a wrapper for the `MaxMind geoip2 Python
-library`__. [#]_
+library`__. [#]_ This module allows to resolve a location based on a given IP
+address or hostname and can be used for example to redirect users to a
+localized version of your website.
 
 In order to perform IP-based geolocation, the :class:`GeoIP2` object requires
 the `geoip2 Python library`__ and the GeoIP `Country` and/or `City` `datasets
