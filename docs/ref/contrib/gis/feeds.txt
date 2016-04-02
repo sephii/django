@@ -15,9 +15,6 @@ Django's, please consult :doc:`Django's syndication documentation
 
 __ http://georss.org/simple.html
 
-Example
-=======
-
 API Reference
 =============
 
@@ -85,11 +82,13 @@ are available:
 
 .. class:: GeoRSSFeed
 
+Based on :class:`django.utils.feedgenerator.Rss201rev2Feed` (RSS 2.01.)
+
 .. class:: GeoAtom1Feed
+
+Based on :class:`django.utils.feedgenerator.Atom1Feed` (Atom 1.0.)
 
 .. class:: W3CGeoFeed
 
-.. note::
-
-    `W3C Geo`_ formatted feeds only support
-    :class:`~django.contrib.gis.db.models.PointField` geometries.
+`W3C Geo`_ feed. Note that such feeds only support
+:class:`~django.contrib.gis.db.models.PointField` geometries.
