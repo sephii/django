@@ -8,6 +8,9 @@ OGR Inspection
 
 .. currentmodule:: django.contrib.gis.utils
 
+ogrinspect
+==========
+
 .. function:: ogrinspect(data_source, model_name, **kwargs)
 
 Given a data source (either a string or a
@@ -76,6 +79,9 @@ Optional Keyword Arguments
     model fields will have ``null=True``. If the user wants to specify
     give specific fields to have null, then a list/tuple of OGR field
     names may be used.
+
+mapping
+=======
 
 .. function:: mapping(data_source, geom_name='geom', layer_key=0, multi_geom=False)
 

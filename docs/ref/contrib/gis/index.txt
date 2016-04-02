@@ -33,7 +33,9 @@ Models
 ======
 
 * :doc:`db-api`
+* :doc:`model-api`
 * :doc:`geoquerysets`
+* :doc:`functions`
 
 Forms
 =====
@@ -54,13 +56,12 @@ Dealing with geographical data
 ==============================
 
 * :ref:`dealing-with-geometry-objects`
-* :ref:`dealing-with-measure-objects`
+* :ref:`dealing-with-measurement-objects`
+* :doc:`data-import`
 
 Common usecases
 ===============
 
-* :doc:`layermapping`
-* :doc:`ogrinspect`
 * :doc:`serializers`
 * :doc:`feeds`
 * :doc:`sitemaps`
@@ -71,10 +72,10 @@ Reference
 .. toctree::
    :maxdepth: 1
 
-   model-api
-   functions
    measure
    geos
    gdal
    geoip
    geoip2
+   layermapping
+   ogrinspect

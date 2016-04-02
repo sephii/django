@@ -1,15 +1,12 @@
-===================
-Measurement Objects
-===================
+===============
+Measurement API
+===============
 
 .. module:: django.contrib.gis.measure
     :synopsis: GeoDjango's distance and area measurement objects.
 
-Measurement API
-===============
-
 ``Distance``
-------------
+============
 
 .. class:: Distance(**kwargs)
 
@@ -41,7 +38,7 @@ Measurement API
     Alias for :class:`Distance` class.
 
 ``Area``
---------
+========
 
 .. class:: Area(**kwargs)
 
@@ -124,4 +121,3 @@ Unit Attribute                     Full name or alias(es)
     except they are prefixed with ``sq_`` (area units are square in nature).
     For example, ``Area(sq_m=2)`` creates an :class:`Area` object
     representing two square meters.
-

@@ -142,10 +142,10 @@ Geometries support set-like operators::
 More information on geometric objects can be found in the :doc:`GEOS API
 documentation <geos>`.
 
-.. _dealing-with-measure-objects:
+.. _dealing-with-measurement-objects:
 
-Measure objects
-===============
+Measurement objects
+===================
 
 The :mod:`~django.contrib.gis.measure` module contains objects that allow for
 convenient representation of distance and area units of measure.
