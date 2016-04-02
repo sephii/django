@@ -49,6 +49,15 @@ Working with GeoDjango
 * :doc:`testing`
 * :doc:`deployment`
 
+Common usecases
+===============
+
+* :doc:`layermapping`
+* :doc:`ogrinspect`
+* :doc:`serializers`
+* :doc:`feeds`
+* :doc:`sitemaps`
+
 Reference
 =========
 
@@ -62,4 +71,3 @@ Reference
    gdal
    geoip
    geoip2
-   utils
