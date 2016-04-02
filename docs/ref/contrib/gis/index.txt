@@ -32,24 +32,33 @@ First steps
 Models
 ======
 
-* :doc:`db-api`
-* :doc:`model-api`
-* :doc:`geoquerysets`
-* :doc:`functions`
+.. toctree::
+   :maxdepth: 1
+
+   db-api
+   model-api
+   geoquerysets
+   functions
 
 Forms
 =====
 
-* :doc:`forms-api`
+.. toctree::
+   :maxdepth: 1
+
+   forms
 
 Working with GeoDjango
 ======================
 
-* :doc:`admin`
-* :doc:`feeds`
-* :doc:`sitemaps`
-* :doc:`commands`
-* :doc:`testing`
+.. toctree::
+   :maxdepth: 1
+
+   admin
+   feeds
+   sitemaps
+   commands
+   testing
 
 Dealing with geographical data
 ==============================
@@ -61,9 +70,12 @@ Dealing with geographical data
 Common usecases
 ===============
 
-* :doc:`serializers`
-* :doc:`feeds`
-* :doc:`sitemaps`
+.. toctree::
+   :maxdepth: 1
+
+   serializers
+   feeds
+   sitemaps
 
 Reference
 =========

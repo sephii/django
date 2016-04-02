@@ -1,6 +1,6 @@
-===================
-GeoDjango Forms API
-===================
+=================================
+GeoDjango form fields and widgets
+=================================
 
 .. module:: django.contrib.gis.forms
     :synopsis: GeoDjango forms API.
