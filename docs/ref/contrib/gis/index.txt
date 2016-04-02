@@ -50,7 +50,6 @@ Working with GeoDjango
 * :doc:`sitemaps`
 * :doc:`commands`
 * :doc:`testing`
-* :doc:`deployment`
 
 Dealing with geographical data
 ==============================
