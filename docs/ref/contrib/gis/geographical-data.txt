@@ -1,0 +1,207 @@
+==============================
+Dealing with geographical data
+==============================
+
+.. _dealing-with-geometry-objects:
+
+Geometry objects
+================
+
+Creating a Geometry
+-------------------
+
+:class:`~django.contrib.gis.geos.GEOSGeometry` objects may be created in a few
+ways. The first is to simply instantiate the object on some spatial input --
+the following are examples of creating the same geometry from WKT, HEX, WKB,
+and GeoJSON::
+
+    >>> from django.contrib.gis.geos import GEOSGeometry
+    >>> pnt = GEOSGeometry('POINT(5 23)') # WKT
+    >>> pnt = GEOSGeometry('010100000000000000000014400000000000003740') # HEX
+    >>> pnt = GEOSGeometry(buffer('\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x14@\x00\x00\x00\x00\x00\x007@'))
+    >>> pnt = GEOSGeometry('{ "type": "Point", "coordinates": [ 5.000000, 23.000000 ] }') # GeoJSON
+
+Another option is to use the constructor for the specific geometry type that
+you wish to create. For example, a :class:`~django.contrib.gis.geos.Point`
+object may be created by passing in the X and Y coordinates into its
+constructor::
+
+    >>> from django.contrib.gis.geos import Point
+    >>> pnt = Point(5, 23)
+
+All these constructors take the keyword argument ``srid``. For example::
+
+    >>> from django.contrib.gis.geos import GEOSGeometry, LineString, Point
+    >>> print(GEOSGeometry('POINT (0 0)', srid=4326))
+    SRID=4326;POINT (0.0000000000000000 0.0000000000000000)
+    >>> print(LineString((0, 0), (1, 1), srid=4326))
+    SRID=4326;LINESTRING (0.0000000000000000 0.0000000000000000, 1.0000000000000000 1.0000000000000000)
+    >>> print(Point(0, 0, srid=32140))
+    SRID=32140;POINT (0.0000000000000000 0.0000000000000000)
+
+Finally, there is the :func:`django.contrib.gis.geos.fromfile` factory method
+which returns a :class:`~django.contrib.gis.geos.GEOSGeometry` object from a
+file::
+
+    >>> from django.contrib.gis.geos import fromfile
+    >>> pnt = fromfile('/path/to/pnt.wkt')
+    >>> pnt = fromfile(open('/path/to/pnt.wkt'))
+
+.. _geos-exceptions-in-logfile:
+
+.. admonition:: My logs are filled with GEOS-related errors
+
+    You find many ``TypeError`` or ``AttributeError`` exceptions filling your
+    Web server's log files. This generally means that you are creating GEOS
+    objects at the top level of some of your Python modules. Then, due to a
+    race condition in the garbage collector, your module is garbage collected
+    before the GEOS object. To prevent this, create
+    :class:`~django.contrib.gis.geos.GEOSGeometry` objects inside the local
+    scope of your functions/methods.
+
+Geometries are Pythonic
+-----------------------
+:class:`~django.contrib.gis.geos.GEOSGeometry` objects are 'Pythonic', in other
+words components may be accessed, modified, and iterated over using standard
+Python conventions. For example, you can iterate over the coordinates in a
+:class:`~django.contrib.gis.geos.Point`::
+
+    >>> pnt = Point(5, 23)
+    >>> [coord for coord in pnt]
+    [5.0, 23.0]
+
+With any geometry object, the
+:attr:`~django.contrib.gis.geos.GEOSGeometry.coords` property may be used to get
+the geometry coordinates as a Python tuple::
+
+    >>> pnt.coords
+    (5.0, 23.0)
+
+You can get/set geometry components using standard Python indexing techniques.
+However, what is returned depends on the geometry type of the object. For
+example, indexing on a :class:`~django.contrib.gis.geos.LineString` returns a
+coordinate tuple::
+
+    >>> from django.contrib.gis.geos import LineString
+    >>> line = LineString((0, 0), (0, 50), (50, 50), (50, 0), (0, 0))
+    >>> line[0]
+    (0.0, 0.0)
+    >>> line[-2]
+    (50.0, 0.0)
+
+Whereas indexing on a :class:`~django.contrib.gis.geos.Polygon` will return the
+ring (a :class:`~django.contrib.gis.geos.LinearRing` object) corresponding to
+the index::
+
+    >>> from django.contrib.gis.geos import Polygon
+    >>> poly = Polygon( ((0.0, 0.0), (0.0, 50.0), (50.0, 50.0), (50.0, 0.0), (0.0, 0.0)) )
+    >>> poly[0]
+    <LinearRing object at 0x1044395b0>
+    >>> poly[0][-2] # second-to-last coordinate of external ring
+    (50.0, 0.0)
+
+In addition, coordinates/components of the geometry may added or modified,
+just like a Python list::
+
+    >>> line[0] = (1.0, 1.0)
+    >>> line.pop()
+    (0.0, 0.0)
+    >>> line.append((1.0, 1.0))
+    >>> line.coords
+    ((1.0, 1.0), (0.0, 50.0), (50.0, 50.0), (50.0, 0.0), (1.0, 1.0))
+
+Geometries support set-like operators::
+
+    >>> from django.contrib.gis.geos import LineString
+    >>> ls1 = LineString((0, 0), (2, 2))
+    >>> ls2 = LineString((1, 1), (3, 3))
+    >>> print(ls1 | ls2)  # equivalent to `ls1.union(ls2)`
+    MULTILINESTRING ((0 0, 1 1), (1 1, 2 2), (2 2, 3 3))
+    >>> print(ls1 & ls2)  # equivalent to `ls1.intersection(ls2)`
+    LINESTRING (1 1, 2 2)
+    >>> print(ls1 - ls2)  # equivalent to `ls1.difference(ls2)`
+    LINESTRING(0 0, 1 1)
+    >>> print(ls1 ^ ls2)  # equivalent to `ls1.sym_difference(ls2)`
+    MULTILINESTRING ((0 0, 1 1), (2 2, 3 3))
+
+.. admonition:: Equality operator doesn't check spatial equality
+
+    The :class:`~django.contrib.gis.geos.GEOSGeometry` equality operator uses
+    :meth:`~django.contrib.gis.geos.GEOSGeometry.equals_exact`, not
+    :meth:`~django.contrib.gis.geos.GEOSGeometry.equals`, i.e.  it requires the
+    compared geometries to have the same coordinates in the same positions::
+
+        >>> from django.contrib.gis.geos import LineString
+        >>> ls1 = LineString((0, 0), (1, 1))
+        >>> ls2 = LineString((1, 1), (0, 0))
+        >>> ls1.equals(ls2)
+        True
+        >>> ls1 == ls2
+        False
+
+More information on geometric objects can be found in the :doc:`GEOS API
+documentation <geos>`.
+
+.. _dealing-with-measure-objects:
+
+Measure objects
+===============
+
+The :mod:`~django.contrib.gis.measure` module contains objects that allow for
+convenient representation of distance and area units of measure.
+Specifically, it implements two objects,
+:class:`~django.contrib.gis.measure.Distance` and
+:class:`~django.contrib.gis.measure.Area` -- both of which may be accessed via
+the :class:`~django.contrib.gis.measure.D` and
+:class:`~django.contrib.gis.measure.A` convenience aliases, respectively.
+
+Example
+-------
+
+:class:`~django.contrib.gis.measure.Distance` objects may be instantiated using
+a keyword argument indicating the context of the units. In the example below,
+two different distance objects are instantiated in units of kilometers (``km``)
+and miles (``mi``)::
+
+    >>> from django.contrib.gis.measure import Distance, D
+    >>> d1 = Distance(km=5)
+    >>> print(d1)
+    5.0 km
+    >>> d2 = D(mi=5) # `D` is an alias for `Distance`
+    >>> print(d2)
+    5.0 mi
+
+Conversions are easy, just access the preferred unit attribute to get a
+converted distance quantity::
+
+    >>> print(d1.mi) # Converting 5 kilometers to miles
+    3.10685596119
+    >>> print(d2.km) # Converting 5 miles to kilometers
+    8.04672
+
+Moreover, arithmetic operations may be performed between the distance
+objects::
+
+    >>> print(d1 + d2) # Adding 5 miles to 5 kilometers
+    13.04672 km
+    >>> print(d2 - d1) # Subtracting 5 kilometers from 5 miles
+    1.89314403881 mi
+
+Two :class:`~django.contrib.gis.measure.Distance` objects multiplied together
+will yield an :class:`~django.contrib.gis.measure.Area` object, which uses
+squared units of measure::
+
+    >>> a = d1 * d2 # Returns an Area object.
+    >>> print(a)
+    40.2336 sq_km
+
+To determine what the attribute abbreviation of a unit is, the ``unit_attname``
+class method may be used::
+
+    >>> print(Distance.unit_attname('US Survey Foot'))
+    survey_ft
+    >>> print(Distance.unit_attname('centimeter'))
+    cm
+
+More information on measure objects and supported units can be found in the
+:doc:`measure objects reference <measure>`.

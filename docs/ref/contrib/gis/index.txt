@@ -26,7 +26,8 @@ First steps
 
 * **Tutorial:**
   :doc:`Part 1: Models and lookups <intro/tutorial01>` |
-  :doc:`Part 2: The admin site <intro/tutorial02>`
+  :doc:`Part 2: The admin site <intro/tutorial02>` |
+  :doc:`Part 3: Representing geographical data <intro/tutorial03>`
 
 Models
 ======
@@ -48,6 +49,12 @@ Working with GeoDjango
 * :doc:`commands`
 * :doc:`testing`
 * :doc:`deployment`
+
+Dealing with geographical data
+==============================
+
+* :ref:`dealing-with-geometry-objects`
+* :ref:`dealing-with-measure-objects`
 
 Common usecases
 ===============
