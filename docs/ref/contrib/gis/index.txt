@@ -35,10 +35,11 @@ Models
 .. toctree::
    :maxdepth: 1
 
+   model-fields
    db-api
-   model-api
-   geoquerysets
    functions
+   geoquerysets
+   measure
 
 Forms
 =====
@@ -76,6 +77,9 @@ Common usecases
    serializers
    feeds
    sitemaps
+   geoip
+   geoip2
+   layermapping
 
 Reference
 =========
@@ -83,10 +87,6 @@ Reference
 .. toctree::
    :maxdepth: 1
 
-   measure
    geos
    gdal
-   geoip
-   geoip2
-   layermapping
    ogrinspect

@@ -160,7 +160,8 @@ class BaseSpatialField(Field):
 
 class GeometryField(GeoSelectFormatMixin, BaseSpatialField):
     """
-    The base Geometry field -- maps to the OpenGIS Specification Geometry type.
+    The base Geometry field -- maps to the OpenGIS Specification ``GEOMETRY``
+    type.
     """
     description = _("The base Geometry field -- maps to the OpenGIS Specification Geometry type.")
     form_class = forms.GeometryField
@@ -351,42 +352,82 @@ for klass in gis_lookups.values():
 
 # The OpenGIS Geometry Type Fields
 class PointField(GeometryField):
+    """
+    A Point is a 0-dimensional geometric object and represents a single
+    location in coordinate space. A Point has an x-coordinate value and a
+    y-coordinate value.
+
+    This field is mapped to the OpenGIS specification ``POINT`` type.
+    """
     geom_type = 'POINT'
     form_class = forms.PointField
     description = _("Point")
 
 
 class LineStringField(GeometryField):
+    """
+    A LineString is a set of ordered points that, using linear interpolation,
+    create segments.
+
+    This field is mapped to the OpenGIS specification ``LINESTRING`` type.
+    """
     geom_type = 'LINESTRING'
     form_class = forms.LineStringField
     description = _("Line string")
 
 
 class PolygonField(GeometryField):
+    """
+    A Polygon is a planar surface defined by 1 exterior boundary and 0 or more
+    interior boundaries. Each interior boundary defines a hole in the polygon.
+
+    This field is mapped to the OpenGIS specification ``POLYGON`` type.
+    """
     geom_type = 'POLYGON'
     form_class = forms.PolygonField
     description = _("Polygon")
 
 
 class MultiPointField(GeometryField):
+    """
+    A MultiPoint is a set of unordered points.
+
+    This field is mapped to the OpenGIS specification ``MULTIPOINT`` type.
+    """
     geom_type = 'MULTIPOINT'
     form_class = forms.MultiPointField
     description = _("Multi-point")
 
 
 class MultiLineStringField(GeometryField):
+    """
+    A MultiLineString is a set of LineStrings.
+
+    This field is mapped to the OpenGIS specification ``MULTILINESTRING`` type.
+    """
     geom_type = 'MULTILINESTRING'
     form_class = forms.MultiLineStringField
     description = _("Multi-line string")
 
 
 class MultiPolygonField(GeometryField):
+    """
+    A MultiPolygonField is a set of Polygons.
+
+    This field is mapped to the OpenGIS specification ``MULTIPOLYGON`` type.
+    """
     geom_type = 'MULTIPOLYGON'
     form_class = forms.MultiPolygonField
     description = _("Multi polygon")
 
 
 class GeometryCollectionField(GeometryField):
+    """
+    A GeometryCollection is a collection of geometric objects.
+
+    This field is mapped to the OpenGIS specification ``GEOMETRYCOLLECTION``
+    type.
+    """
     geom_type = 'GEOMETRYCOLLECTION'
     form_class = forms.GeometryCollectionField
     description = _("Geometry collection")
@@ -403,7 +444,8 @@ class ExtentField(GeoSelectFormatMixin, Field):
 
 class RasterField(BaseSpatialField):
     """
-    Raster field for GeoDjango -- evaluates into GDALRaster objects.
+    Raster field for GeoDjango -- evaluates into
+    :class:`~django.contrib.gis.gdal.GDALRaster` objects.
     """
 
     description = _("Raster Field")

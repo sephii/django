@@ -1,13 +1,12 @@
-===================
-GeoDjango Model API
-===================
+======================
+GeoDjango model fields
+======================
 
 .. module:: django.contrib.gis.db.models
-    :synopsis: GeoDjango model and field API.
+    :synopsis: GeoDjango model fields.
 
-This document explores the details of the GeoDjango Model API.  Throughout this
-section, we'll be using the following geographic model of a `ZIP code`__ and
-of a `Digital Elevation Model`__ as our examples::
+This document explores the details of the GeoDjango spatial fields. Here's an
+example of two Django models that use spatial fields::
 
     from django.contrib.gis.db import models
 
@@ -19,55 +18,89 @@ of a `Digital Elevation Model`__ as our examples::
         name = models.CharField(max_length=100)
         rast = models.RasterField()
 
-__ https://en.wikipedia.org/wiki/ZIP_code
-__ https://en.wikipedia.org/wiki/Digital_elevation_model
-
 Spatial Field Types
 ===================
 
 Spatial fields consist of a series of geometry field types and one raster field
-type. Each of the geometry field types correspond to the OpenGIS Simple
-Features specification [#fnogc]_. There is no such standard for raster data.
+type. Each of the geometry field types correspond to the `OpenGIS Simple
+Features specification <http://www.opengeospatial.org/standards/sfs>`_. There
+is no such standard for raster data.
+
+A detailed description of each field's parameters can be found in the
+:ref:`spatial field options <spatial-field-options>`.
 
 ``GeometryField``
 -----------------
 
-.. class:: GeometryField
+.. class:: GeometryField(verbose_name=None, dim=2, geography=False, srid=4326, spatial_index=True, **kwargs)
+
+The base Geometry field -- maps to the OpenGIS Specification ``GEOMETRY`` type.
 
 ``PointField``
 --------------
 
-.. class:: PointField
+.. class:: PointField(verbose_name=None, dim=2, geography=False, srid=4326, spatial_index=True, **kwargs)
+
+A Point is a 0-dimensional geometric object and represents a single location in
+coordinate space. A Point has an x-coordinate value and a y-coordinate value.
+
+This field is mapped to the OpenGIS specification ``POINT`` type.
 
 ``LineStringField``
 -------------------
 
-.. class:: LineStringField
+.. class:: LineStringField(verbose_name=None, dim=2, geography=False, srid=4326, spatial_index=True, **kwargs)
+
+A LineString is a set of ordered points that, using linear interpolation,
+create segments.
+
+This field is mapped to the OpenGIS specification ``LINESTRING`` type.
 
 ``PolygonField``
 ----------------
 
-.. class:: PolygonField
+.. class:: PolygonField(verbose_name=None, dim=2, geography=False, srid=4326, spatial_index=True, **kwargs)
+
+A Polygon is a planar surface defined by 1 exterior boundary and 0 or more
+interior boundaries. Each interior boundary defines a hole in the polygon.
+
+This field is mapped to the OpenGIS specification ``POLYGON`` type.
 
 ``MultiPointField``
 -------------------
 
-.. class:: MultiPointField
+.. class:: MultiPointField(verbose_name=None, dim=2, geography=False, srid=4326, spatial_index=True, **kwargs)
+
+A MultiPoint is a set of unordered points.
+
+This field is mapped to the OpenGIS specification ``MULTIPOINT`` type.
 
 ``MultiLineStringField``
 ------------------------
 
-.. class:: MultiLineStringField
+.. class:: MultiLineStringField(verbose_name=None, dim=2, geography=False, srid=4326, spatial_index=True, **kwargs)
+
+A MultiLineString is a set of LineStrings.
+
+This field is mapped to the OpenGIS specification ``MULTILINESTRING`` type.
 
 ``MultiPolygonField``
 ---------------------
 
-.. class:: MultiPolygonField
+.. class:: MultiPolygonField(verbose_name=None, dim=2, geography=False, srid=4326, spatial_index=True, **kwargs)
+
+A MultiPolygonField is a set of Polygons.
+
+This field is mapped to the OpenGIS specification ``MULTIPOLYGON`` type.
 
 ``GeometryCollectionField``
 ---------------------------
 
-.. class:: GeometryCollectionField
+.. class:: GeometryCollectionField(verbose_name=None, dim=2, geography=False, srid=4326, spatial_index=True, **kwargs)
+
+A GeometryCollection is a collection of geometric objects.
+
+This field is mapped to the OpenGIS specification ``GEOMETRYCOLLECTION`` type.
 
 ``RasterField``
 ---------------
@@ -76,7 +109,10 @@ Features specification [#fnogc]_. There is no such standard for raster data.
 
 .. class:: RasterField
 
-``RasterField`` is currently only implemented for the PostGIS backend.
+``RasterField`` is currently only implemented for the PostGIS backend. It
+evaluates into :class:`~django.contrib.gis.gdal.GDALRaster` objects.
+
+.. _spatial-field-options:
 
 Spatial Field Options
 =====================
@@ -209,6 +245,18 @@ details.
 .. note::
 
     Geography support is limited to PostGIS and will force the SRID to be 4326.
+
+``extent``
+----------
+
+Customize the extent, in a 4-tuple of WGS 84 coordinates, for the geometry
+field entry in the ``USER_SDO_GEOM_METADATA`` table. Defaults to (-180.0,
+-90.0, 180.0, 90.0).
+
+``tolerance``
+-------------
+Define the tolerance, in meters, to use for the geometry field entry in the
+``USER_SDO_GEOM_METADATA`` table. Defaults to 0.05.
 
 .. _geography-type:
 
